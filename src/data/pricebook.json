@@ -3,7 +3,7 @@
     "region": "APAC",
     "country": "Australia",
     "Supplier": "Direct",
-    "Currency" : "USD",
+    "Currency" : "$",
     "l1": {
       "with_year": 48000,
       "without_year": 52000
@@ -19,13 +19,17 @@
      "l4": {
       "with_year": 68000,
       "without_year": 76000
+    },
+     "l5": {
+      "with_year": 78000,
+      "without_year": 84000
     }
   },
    {
     "region": "Europe",
     "country": "Austria",
     "Supplier": "Direct",
-    "Currency" : "Euro",
+    "Currency" : "€",
     "l1": {
       "with_year": 48000,
       "without_year": 52000
@@ -41,6 +45,10 @@
      "l4": {
       "with_year": 68000,
       "without_year": 76000
+    },
+     "l5": {
+      "with_year": 78000,
+      "without_year": 84000
     }
   },
    {
@@ -63,6 +71,10 @@
      "l4": {
       "with_year": 68000,
       "without_year": 76000
+    },
+     "l5": {
+      "with_year": 78000,
+      "without_year": 84000
     }
   }
 ]
