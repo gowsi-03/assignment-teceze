@@ -1,0 +1,68 @@
+[
+  {
+    "region": "APAC",
+    "country": "Australia",
+    "Supplier": "Direct",
+    "Currency" : "USD",
+    "l1": {
+      "with_year": 48000,
+      "without_year": 52000
+    },
+     "l2": {
+      "with_year": 52000,
+      "without_year": 57000
+    },
+     "l3": {
+      "with_year": 58000,
+      "without_year": 66000
+    },
+     "l4": {
+      "with_year": 68000,
+      "without_year": 76000
+    }
+  },
+   {
+    "region": "Europe",
+    "country": "Austria",
+    "Supplier": "Direct",
+    "Currency" : "Euro",
+    "l1": {
+      "with_year": 48000,
+      "without_year": 52000
+    },
+     "l2": {
+      "with_year": 52000,
+      "without_year": 57000
+    },
+     "l3": {
+      "with_year": 58000,
+      "without_year": 66000
+    },
+     "l4": {
+      "with_year": 68000,
+      "without_year": 76000
+    }
+  },
+   {
+    "region": "Europe",
+    "country": "Belgium",
+    "Supplier": "Direct",
+    "Currency" : "Euro",
+    "l1": {
+      "with_year": 48000,
+      "without_year": 52000
+    },
+     "l2": {
+      "with_year": 52000,
+      "without_year": 57000
+    },
+     "l3": {
+      "with_year": 58000,
+      "without_year": 66000
+    },
+     "l4": {
+      "with_year": 68000,
+      "without_year": 76000
+    }
+  }
+]
