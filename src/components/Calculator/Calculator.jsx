@@ -5,7 +5,7 @@ export default function Calculator() {
   const [region, setRegion] = useState("");
   const [country, setCountry] = useState("");
   const [service, setService] = useState("");
-  const [withYear, setWithYear] = useState(true); // toggle with_year / without_year
+  const [selectedCategory, setSelectedCategory] = useState(""); // Track selected category
 
   // Get the list of country names for the selected region
   const countries = region
@@ -22,11 +22,14 @@ export default function Calculator() {
     (c) => c.country === country
   ) || null; // Use `null` as a fallback in case no country is found
 
-  // Calculate price
-  const price =
-    selectedCountryData && service
-      ? selectedCountryData[service]?.[withYear ? "withBackfill" : "withoutBackfill"]
-      : null;
+  // Calculate price based on the service level
+  const getPrice = (level, category) => {
+    if (!selectedCountryData) return null;
+
+    // Use category data (shortTerm, longTerm, etc.) for the pricing
+    const categoryData = selectedCountryData[category];
+    return categoryData ? categoryData[0][level] : null;
+  };
 
   return (
     <div className="bg-gray-50">
@@ -57,6 +60,7 @@ export default function Calculator() {
                     setRegion(e.target.value);
                     setCountry("");
                     setService("");
+                    setSelectedCategory(""); // Reset category when region changes
                   }}
                   className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm md:text-base focus:ring-2 focus:ring-blue-500"
                 >
@@ -89,6 +93,25 @@ export default function Calculator() {
                 </select>
               </div>
 
+               <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">
+                Select Category (Short/Long Term)
+              </label>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                disabled={!country}
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm md:text-base focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select Category</option>
+                {["shortTerm", "longTerm"].map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </div>
+
               {/* Service Level */}
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1">
@@ -97,7 +120,7 @@ export default function Calculator() {
                 <select
                   value={service}
                   onChange={(e) => setService(e.target.value)}
-                  disabled={!country}
+                  disabled={!selectedCategory}
                   className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm md:text-base focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">Select Service Level</option>
@@ -111,46 +134,14 @@ export default function Calculator() {
             </div>
           </div>
 
-          {/* Step 2 */}
-          <div className="mt-10">
-            <h2 className="text-lg md:text-xl font-semibold text-gray-700">
-              Step 2: Choose Pricing Model
-            </h2>
-
-            <div className="flex items-center space-x-4 mt-2">
-              <label className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  checked={withYear}
-                  onChange={() => setWithYear(true)}
-                  className="form-radio"
-                />
-                <span>With Year</span>
-              </label>
-              <label className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  checked={!withYear}
-                  onChange={() => setWithYear(false)}
-                  className="form-radio"
-                />
-                <span>Without Year</span>
-              </label>
-            </div>
-          </div>
+          {/* Display Output */}
           <div className="flex items-center my-8">
             <div className="flex-1 h-px bg-gray-300"></div>
             <span className="px-4 text-gray-500">Display the output</span>
             <div className="flex-1 h-px bg-gray-300"></div>
           </div>
 
-          {/* Display Output */}
-          <p>
-            <span className="font-semibold">Region:</span> {region || "-"}
-          </p>
-          <p>
-            <span className="font-semibold">Country:</span> {country || "-"}
-          </p>
+          {/* Display selected values */}
           <p>
             <span className="font-semibold">Supplier:</span>{" "}
             {selectedCountryData?.supplier || "-"}
@@ -167,9 +158,13 @@ export default function Calculator() {
             <span className="font-semibold">Service Level:</span>{" "}
             {service || "-"}
           </p>
+
+          {/* Show Price for selected category */}
           <p>
             <span className="font-semibold">Price:</span>{" "}
-            {price !== null ? `${price} USD` : "-"}
+            {selectedCategory && service
+              ? `${getPrice(service, selectedCategory)} USD`
+              : "-"}
           </p>
         </div>
       </div>
