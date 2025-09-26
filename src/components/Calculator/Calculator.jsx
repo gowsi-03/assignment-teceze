@@ -18,9 +18,8 @@ export default function Calculator() {
   const selectedRegion = data.find((d) => d.region === region);
 
   // Find the selected country's data
-  const selectedCountryData = selectedRegion?.countries.find(
-    (c) => c.country === country
-  ) || null; // Use `null` as a fallback in case no country is found
+  const selectedCountryData =
+    selectedRegion?.countries.find((c) => c.country === country) || null; // Use `null` as a fallback in case no country is found
 
   // Calculate price based on the service level
   const getPrice = (level, category) => {
@@ -32,26 +31,26 @@ export default function Calculator() {
   };
 
   return (
-    <div className="bg-gray-50">
-      <h1 className="text-2xl md:text-4xl font-bold text-center text-blue-800 mt-8">
+    <div className="bg-gray-50 dark:bg-gray-800 min-h-screen">
+      <h1 className="text-2xl md:text-4xl font-bold text-center text-blue-800 dark:text-blue-300 mt-8">
         IT Service Pricing Calculator
       </h1>
-      <p className="text-center text-gray-500 mt-2 text-sm md:text-base">
+      <p className="text-center text-gray-500 dark:text-gray-400 mt-2 text-sm md:text-base">
         Calculate your service costs based on the Teceze Global Pricebook.
       </p>
 
       <div className="mt-6 flex items-center justify-center px-4">
-        <div className="w-full max-w-7xl bg-white rounded-2xl shadow-lg p-8">
+        <div className="w-full max-w-7xl bg-white dark:bg-gray-700 rounded-2xl shadow-lg p-8">
           {/* Step 1 */}
           <div className="mt-10">
-            <h2 className="text-lg md:text-xl font-semibold text-gray-700">
+            <h2 className="text-lg md:text-xl font-semibold text-gray-700 dark:text-gray-200">
               Step 1: Select Service Details
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
               {/* Region */}
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
                   Region
                 </label>
                 <select
@@ -62,7 +61,7 @@ export default function Calculator() {
                     setService("");
                     setSelectedCategory(""); // Reset category when region changes
                   }}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm md:text-base focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm md:text-base focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100"
                 >
                   <option value="">Select Region</option>
                   {[...new Set(data.map((d) => d.region))].map((reg) => (
@@ -75,14 +74,14 @@ export default function Calculator() {
 
               {/* Country */}
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
                   Country
                 </label>
                 <select
                   value={country}
                   onChange={(e) => setCountry(e.target.value)}
                   disabled={!region}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm md:text-base focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm md:text-base focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100"
                 >
                   <option value="">Select Country</option>
                   {countries.map((cty) => (
@@ -93,35 +92,36 @@ export default function Calculator() {
                 </select>
               </div>
 
-               <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
-                Select Category (Short/Long Term)
-              </label>
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                disabled={!country}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm md:text-base focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Select Category</option>
-                {["shortTerm", "longTerm"].map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-            </div>
+              {/* Category */}
+              <div>
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
+                  Select Category (Short/Long Term)
+                </label>
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  disabled={!country}
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm md:text-base focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100"
+                >
+                  <option value="">Select Category</option>
+                  {["shortTerm", "longTerm"].map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
               {/* Service Level */}
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
                   Service Level
                 </label>
                 <select
                   value={service}
                   onChange={(e) => setService(e.target.value)}
                   disabled={!selectedCategory}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm md:text-base focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm md:text-base focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100"
                 >
                   <option value="">Select Service Level</option>
                   {["L1", "L2", "L3", "L4", "L5"].map((sl) => (
@@ -136,31 +136,33 @@ export default function Calculator() {
 
           {/* Display Output */}
           <div className="flex items-center my-8">
-            <div className="flex-1 h-px bg-gray-300"></div>
-            <span className="px-4 text-gray-500">Display the output</span>
-            <div className="flex-1 h-px bg-gray-300"></div>
+            <div className="flex-1 h-px bg-gray-300 dark:bg-gray-600"></div>
+            <span className="px-4 text-gray-500 dark:text-gray-300">
+              Display the output
+            </span>
+            <div className="flex-1 h-px bg-gray-300 dark:bg-gray-600"></div>
           </div>
 
           {/* Display selected values */}
-          <p>
+          <p className="text-gray-700 dark:text-gray-300">
             <span className="font-semibold">Supplier:</span>{" "}
             {selectedCountryData?.supplier || "-"}
           </p>
-          <p>
+          <p className="text-gray-700 dark:text-gray-300">
             <span className="font-semibold">Currency:</span>{" "}
             {selectedCountryData?.currency || "-"}
           </p>
-          <p>
+          <p className="text-gray-700 dark:text-gray-300">
             <span className="font-semibold">Payment Terms:</span>{" "}
             {selectedCountryData?.paymentTerms || "-"}
           </p>
-          <p>
+          <p className="text-gray-700 dark:text-gray-300">
             <span className="font-semibold">Service Level:</span>{" "}
             {service || "-"}
           </p>
 
           {/* Show Price for selected category */}
-          <p>
+          <p className="text-gray-700 dark:text-gray-300">
             <span className="font-semibold">Price:</span>{" "}
             {selectedCategory && service
               ? `${getPrice(service, selectedCategory)} USD`
