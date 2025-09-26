@@ -7,22 +7,25 @@ export default function Calculator() {
   const [service, setService] = useState("");
   const [withYear, setWithYear] = useState(true); // toggle with_year / without_year
 
-  // Get countries for selected region
-  const countries = data
-    .filter((d) => d.region === region)
-    .map((d) => d.country);
+  // Get the list of country names for the selected region
+  const countries = region
+    ? data
+        .find((d) => d.region === region) // Find the region
+        ?.countries.map((c) => c.country) // Extract country names
+    : [];
 
-  // Find the selected entry for price
-  const selectedEntry = data.find(
-    (d) => d.region === region && d.country === country
-  );
+  // Get the selected region object
+  const selectedRegion = data.find((d) => d.region === region);
+
+  // Find the selected country's data
+  const selectedCountryData = selectedRegion?.countries.find(
+    (c) => c.country === country
+  ) || null; // Use `null` as a fallback in case no country is found
 
   // Calculate price
   const price =
-    selectedEntry && service
-      ? selectedEntry[service.toLowerCase()][
-          withYear ? "with_year" : "without_year"
-        ]
+    selectedCountryData && service
+      ? selectedCountryData[service]?.[withYear ? "withBackfill" : "withoutBackfill"]
       : null;
 
   return (
@@ -135,11 +138,13 @@ export default function Calculator() {
               </label>
             </div>
           </div>
-          <div class="flex items-center my-8">
-            <div class="flex-1 h-px bg-gray-300"></div>
-            <span class="px-4 text-gray-500">Display the output</span>
-            <div class="flex-1 h-px bg-gray-300"></div>
+          <div className="flex items-center my-8">
+            <div className="flex-1 h-px bg-gray-300"></div>
+            <span className="px-4 text-gray-500">Display the output</span>
+            <div className="flex-1 h-px bg-gray-300"></div>
           </div>
+
+          {/* Display Output */}
           <p>
             <span className="font-semibold">Region:</span> {region || "-"}
           </p>
@@ -147,12 +152,24 @@ export default function Calculator() {
             <span className="font-semibold">Country:</span> {country || "-"}
           </p>
           <p>
+            <span className="font-semibold">Supplier:</span>{" "}
+            {selectedCountryData?.supplier || "-"}
+          </p>
+          <p>
+            <span className="font-semibold">Currency:</span>{" "}
+            {selectedCountryData?.currency || "-"}
+          </p>
+          <p>
+            <span className="font-semibold">Payment Terms:</span>{" "}
+            {selectedCountryData?.paymentTerms || "-"}
+          </p>
+          <p>
             <span className="font-semibold">Service Level:</span>{" "}
             {service || "-"}
           </p>
           <p>
             <span className="font-semibold">Price:</span>{" "}
-            {price !== null ? `${price} ${selectedEntry.Currency}` : "-"}
+            {price !== null ? `${price} USD` : "-"}
           </p>
         </div>
       </div>
