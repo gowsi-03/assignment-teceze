@@ -17,7 +17,6 @@ export default function Calculator() {
     longTerm: "Long Term"
   };
 
-
   // Get the list of country names for the selected region
   const countries = region
     ? data
@@ -44,9 +43,22 @@ export default function Calculator() {
           key !== "L5" &&
           key !== "supplier" &&
           key !== "currency" &&
-          key !== "paymentTerms"
+          key !== "paymentTerms" &&
+          key !== "serviceLevels" // Avoid serviceLevels being listed as a category
       )
     : [];
+
+  // Get the service levels dynamically based on the selected category
+  const getServiceLevels = () => {
+    if (!selectedCountryData || !selectedCategory) return [];
+
+    // Fetch the service levels for the selected category
+    const serviceLevelsData = selectedCountryData[selectedCategory];
+    if (!serviceLevelsData || !serviceLevelsData.length) return []; // Return empty if no data exists
+
+    // Dynamically extract the service levels from the first object in the array
+    return Object.keys(serviceLevelsData[0]).filter((key) => key.startsWith("L"));
+  };
 
   // Calculate price based on the service level and category
   const getPrice = (level, category) => {
@@ -54,10 +66,6 @@ export default function Calculator() {
 
     const categoryData = selectedCountryData[category];
     if (!categoryData) return null;
-
-    if (category === "dispatchTicket" || category === "dispatchPricing") {
-      return categoryData[0]?.[level] || null;
-    }
 
     return categoryData[0]?.[level] || null;
   };
@@ -138,7 +146,7 @@ export default function Calculator() {
                   <option value="">Select Category</option>
                   {availableCategories.map((category) => (
                     <option key={category} value={category}>
-                     {categoryLabels[category] || category}
+                      {categoryLabels[category] || category}
                     </option>
                   ))}
                 </select>
@@ -156,7 +164,7 @@ export default function Calculator() {
                   className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm md:text-base focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">Select Service Level</option>
-                  {["L1", "L2", "L3", "L4", "L5"].map((sl) => (
+                  {getServiceLevels().map((sl) => (
                     <option key={sl} value={sl}>
                       {sl}
                     </option>
