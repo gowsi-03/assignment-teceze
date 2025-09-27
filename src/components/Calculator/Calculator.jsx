@@ -52,11 +52,17 @@ export default function Calculator() {
   const getServiceLevels = () => {
     if (!selectedCountryData || !selectedCategory) return [];
 
-    // Fetch the service levels for the selected category
+    // Fetch the category data
     const serviceLevelsData = selectedCountryData[selectedCategory];
+
     if (!serviceLevelsData || !serviceLevelsData.length) return []; // Return empty if no data exists
 
-    // Dynamically extract the service levels from the first object in the array
+    // If it's either dispatchTicket or dispatchPricing, extract the keys dynamically
+    if (selectedCategory === "dispatchTicket" || selectedCategory === "dispatchPricing") {
+      return Object.keys(serviceLevelsData[0]); // Get all keys as service levels
+    }
+
+    // If it's a standard service (L1, L2, L3, L4, L5), filter out those levels
     return Object.keys(serviceLevelsData[0]).filter((key) => key.startsWith("L"));
   };
 
