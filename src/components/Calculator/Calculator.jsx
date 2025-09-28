@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AnimatePresence } from "framer-motion";
+import { motion as Motion, AnimatePresence } from "framer-motion";
 import data from "../../data/pricebook.json"; // Import your JSON file
 
 export default function Calculator() {
@@ -94,17 +94,17 @@ export default function Calculator() {
 
       <div className="mt-6 flex items-center justify-center px-4 pb-10">
         {/* Main Card with smooth layout animation */}
-        <motion.div
+        <Motion.div
           layout
           className="w-full max-w-7xl bg-white rounded-2xl shadow-lg p-8"
         >
           {/* Step 1 */}
-          <motion.div layout className="mt-0 md:mt-10">
+          <Motion.div layout className="mt-0 md:mt-10">
             <h2 className="text-lg md:text-xl font-semibold text-gray-700">
               Step 1: Select Service Details
             </h2>
 
-            <motion.div layout className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+            <Motion.div layout className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
               {/* Region */}
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1">
@@ -201,13 +201,13 @@ export default function Calculator() {
                   ))}
                 </select>
               </div>
-            </motion.div>
-          </motion.div>
+            </Motion.div>
+          </Motion.div>
 
           {/* Network Operations Role Levels  Backfill Options */}
           <AnimatePresence>
             {selectedCategory === "networkOperationsLevels" && service && (
-              <motion.div
+              <Motion.div
                 layout
                 className="mt-6"
                 initial={{ opacity: 0, y: -10 }}
@@ -217,7 +217,7 @@ export default function Calculator() {
               >
                 <p className="font-semibold text-gray-700">Backfill Option:</p>
                 <div className="flex gap-6 mt-2">
-                  <motion.label
+                  <Motion.label
                     whileTap={{ scale: 0.95 }}
                     className="flex items-center cursor-pointer"
                   >
@@ -232,9 +232,9 @@ export default function Calculator() {
                       className="mr-2"
                     />
                     With Backfill
-                  </motion.label>
+                  </Motion.label>
 
-                  <motion.label
+                  <Motion.label
                     whileTap={{ scale: 0.95 }}
                     className="flex items-center cursor-pointer"
                   >
@@ -249,15 +249,15 @@ export default function Calculator() {
                       className="mr-2"
                     />
                     Without Backfill
-                  </motion.label>
+                  </Motion.label>
                 </div>
-              </motion.div>
+              </Motion.div>
             )}
           </AnimatePresence>
 
           {/* Calculate Button */}
           <div className="mt-8 text-center">
-            <motion.button
+            <Motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setShowResult(true)}
@@ -269,13 +269,13 @@ export default function Calculator() {
               className="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Calculate
-            </motion.button>
+            </Motion.button>
           </div>
 
           {/* Display Output after button click */}
           <AnimatePresence>
             {showResult && (
-              <motion.div
+              <Motion.div
                 key="result"
                 layout
                 initial={{ opacity: 0, y: 30 }}
@@ -311,10 +311,10 @@ export default function Calculator() {
                     ? `${getPrice(service, selectedCategory) || "-"} USD`
                     : "-"}
                 </p>
-              </motion.div>
+              </Motion.div>
             )}
           </AnimatePresence>
-        </motion.div>
+        </Motion.div>
       </div>
     </div>
   );
