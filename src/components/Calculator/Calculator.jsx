@@ -10,7 +10,7 @@ export default function Calculator() {
 
   // Create a mapping for human-readable category names
   const categoryLabels = {
-     networkOperationsLevels: "Network Operations Levels",
+    networkOperationsLevels: "Network Operations Levels",
     fullDayVisit: "Full Day Visit",
     halfDayVisits: "Half Day Visit",
     dispatchTicket: "Dispatch Ticket",
@@ -21,9 +21,7 @@ export default function Calculator() {
 
   // Get the list of country names for the selected region
   const countries = region
-    ? data
-        .find((d) => d.region === region)
-        ?.countries.map((c) => c.country)
+    ? data.find((d) => d.region === region)?.countries.map((c) => c.country)
     : [];
 
   // Get the selected region object
@@ -35,24 +33,23 @@ export default function Calculator() {
 
   // Get categories dynamically + add networkOperationsLevels
   const availableCategories = selectedCountryData
-  ? [
-      "networkOperationsLevels",
-      ...Object.keys(selectedCountryData).filter(
-        (key) =>
-          key !== "country" &&
-          key !== "L1" &&
-          key !== "L2" &&
-          key !== "L3" &&
-          key !== "L4" &&
-          key !== "L5" &&
-          key !== "supplier" &&
-          key !== "currency" &&
-          key !== "paymentTerms" &&
-          key !== "serviceLevels"
-      )
-    ]
-  : ["networkOperationsLevels"];
-
+    ? [
+        "networkOperationsLevels",
+        ...Object.keys(selectedCountryData).filter(
+          (key) =>
+            key !== "country" &&
+            key !== "L1" &&
+            key !== "L2" &&
+            key !== "L3" &&
+            key !== "L4" &&
+            key !== "L5" &&
+            key !== "supplier" &&
+            key !== "currency" &&
+            key !== "paymentTerms" &&
+            key !== "serviceLevels"
+        ),
+      ]
+    : ["networkOperationsLevels"];
 
   // Get the service levels dynamically
   const getServiceLevels = () => {
