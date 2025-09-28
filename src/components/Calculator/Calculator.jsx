@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import data from "../../data/pricebook.json"; // Import your JSON file
 
 export default function Calculator() {
@@ -7,7 +8,7 @@ export default function Calculator() {
   const [service, setService] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [backfillOption, setBackfillOption] = useState("");
-  const [showResult, setShowResult] = useState(false); // new state for button click
+  const [showResult, setShowResult] = useState(false);
 
   // Category Labels
   const categoryLabels = {
@@ -92,14 +93,18 @@ export default function Calculator() {
       </p>
 
       <div className="mt-6 flex items-center justify-center px-4 pb-10">
-        <div className="w-full max-w-7xl bg-white rounded-2xl shadow-lg p-8">
+        {/* Main Card with smooth layout animation */}
+        <motion.div
+          layout
+          className="w-full max-w-7xl bg-white rounded-2xl shadow-lg p-8"
+        >
           {/* Step 1 */}
-          <div className="mt-0 md:mt-10">
+          <motion.div layout className="mt-0 md:mt-10">
             <h2 className="text-lg md:text-xl font-semibold text-gray-700">
               Step 1: Select Service Details
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+            <motion.div layout className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
               {/* Region */}
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1">
@@ -196,89 +201,120 @@ export default function Calculator() {
                   ))}
                 </select>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Network Operations Role Levels  Backfill Options */}
-          {selectedCategory === "networkOperationsLevels" && service && (
-            <div className="mt-6">
-              <p className="font-semibold text-gray-700">Backfill Option:</p>
-              <div className="flex gap-6 mt-2">
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    value="withBackfill"
-                    checked={backfillOption === "withBackfill"}
-                    onChange={(e) => {
-                      setBackfillOption(e.target.value);
-                      setShowResult(false);
-                    }}
-                    className="mr-2"
-                  />
-                  With Backfill
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    value="withoutBackfill"
-                    checked={backfillOption === "withoutBackfill"}
-                    onChange={(e) => {
-                      setBackfillOption(e.target.value);
-                      setShowResult(false);
-                    }}
-                    className="mr-2"
-                  />
-                  Without Backfill
-                </label>
-              </div>
-            </div>
-          )}
+          <AnimatePresence>
+            {selectedCategory === "networkOperationsLevels" && service && (
+              <motion.div
+                layout
+                className="mt-6"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.4 }}
+              >
+                <p className="font-semibold text-gray-700">Backfill Option:</p>
+                <div className="flex gap-6 mt-2">
+                  <motion.label
+                    whileTap={{ scale: 0.95 }}
+                    className="flex items-center cursor-pointer"
+                  >
+                    <input
+                      type="radio"
+                      value="withBackfill"
+                      checked={backfillOption === "withBackfill"}
+                      onChange={(e) => {
+                        setBackfillOption(e.target.value);
+                        setShowResult(false);
+                      }}
+                      className="mr-2"
+                    />
+                    With Backfill
+                  </motion.label>
+
+                  <motion.label
+                    whileTap={{ scale: 0.95 }}
+                    className="flex items-center cursor-pointer"
+                  >
+                    <input
+                      type="radio"
+                      value="withoutBackfill"
+                      checked={backfillOption === "withoutBackfill"}
+                      onChange={(e) => {
+                        setBackfillOption(e.target.value);
+                        setShowResult(false);
+                      }}
+                      className="mr-2"
+                    />
+                    Without Backfill
+                  </motion.label>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Calculate Button */}
           <div className="mt-8 text-center">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setShowResult(true)}
-              disabled={!service || (selectedCategory === "networkOperationsLevels" && !backfillOption)}
+              disabled={
+                !service ||
+                (selectedCategory === "networkOperationsLevels" &&
+                  !backfillOption)
+              }
               className="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Calculate
-            </button>
+            </motion.button>
           </div>
 
           {/* Display Output after button click */}
-          {showResult && (
-            <>
-              <div className="flex items-center my-6 md:my-8">
-                <div className="flex-1 h-px bg-gray-300"></div>
-                <span className="px-4 text-gray-500">Result</span>
-                <div className="flex-1 h-px bg-gray-300"></div>
-              </div>
+          <AnimatePresence>
+            {showResult && (
+              <motion.div
+                key="result"
+                layout
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 30 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="flex items-center my-6 md:my-8">
+                  <div className="flex-1 h-px bg-gray-300"></div>
+                  <span className="px-4 text-gray-500">Result</span>
+                  <div className="flex-1 h-px bg-gray-300"></div>
+                </div>
 
-              <p>
-                <span className="font-semibold">Supplier:</span>{" "}
-                {selectedCountryData?.supplier || "-"}
-              </p>
-              <p>
-                <span className="font-semibold">Currency:</span>{" "}
-                {selectedCountryData?.currency || "-"}
-              </p>
-              <p>
-                <span className="font-semibold">Payment Terms:</span>{" "}
-                {selectedCountryData?.paymentTerms || "-"}
-              </p>
-              <p>
-                <span className="font-semibold">Service Level:</span>{" "}
-                {service || "-"}
-              </p>
-              <p>
-                <span className="font-semibold">Price:</span>{" "}
-                {selectedCategory && service
-                  ? `${getPrice(service, selectedCategory) || "-"} USD`
-                  : "-"}
-              </p>
-            </>
-          )}
-        </div>
+                <p>
+                  <span className="font-semibold">Supplier:</span>{" "}
+                  {selectedCountryData?.supplier || "-"}
+                </p>
+                <p>
+                  <span className="font-semibold">Currency:</span>{" "}
+                  {selectedCountryData?.currency || "-"}
+                </p>
+                <p>
+                  <span className="font-semibold">Payment Terms:</span>{" "}
+                  {selectedCountryData?.paymentTerms || "-"}
+                </p>
+                <p>
+                  <span className="font-semibold">Service Level:</span>{" "}
+                  {service || "-"}
+                </p>
+                <p>
+                  <span className="font-semibold">Price:</span>{" "}
+                  {selectedCategory && service
+                    ? `${getPrice(service, selectedCategory) || "-"} USD`
+                    : "-"}
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </div>
     </div>
   );
