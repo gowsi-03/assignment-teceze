@@ -87,16 +87,16 @@ export default function Calculator() {
         Calculate your service costs based on the Teceze Global Pricebook.
       </p>
 
-      <div className="mt-6 flex items-center justify-center px-4 pb-10">
-        <div className="w-full max-w-7xl bg-white rounded-2xl shadow-lg p-8">
-          <div className="mt-0 md:mt-10">
+      <div className="min-h-screen flex items-center justify-center p-6">
+        <div className="w-full max-w-xl bg-white rounded-2xl shadow-lg p-8">
+          <div>
             <h2 className="text-lg md:text-xl font-semibold text-gray-700">
               Step 1: Select Service Details
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+            <div className="pt-4">
               {/* Region */}
-              <div>
+              <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-600 mb-1">
                   Region
                 </label>
@@ -111,17 +111,19 @@ export default function Calculator() {
                     setBackfillOption("");
                     setShowResult(false);
                   }}
-                  options={[...new Set(data.map((d) => d.region))].map((reg) => ({
-                    value: reg,
-                    label: reg,
-                  }))}
+                  options={[...new Set(data.map((d) => d.region))].map(
+                    (reg) => ({
+                      value: reg,
+                      label: reg,
+                    })
+                  )}
                   placeholder="Select Region"
                   isClearable
                 />
               </div>
 
               {/* Country */}
-              <div>
+              <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-600 mb-1">
                   Country
                 </label>
@@ -142,8 +144,95 @@ export default function Calculator() {
                 />
               </div>
 
+              {/* Supplier */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                  Supplier
+                </label>
+                <Select
+                  value={
+                    selectedCountryData?.supplier
+                      ? {
+                          value: selectedCountryData.supplier,
+                          label: selectedCountryData.supplier,
+                        }
+                      : null
+                  }
+                  options={
+                    selectedCountryData?.supplier
+                      ? [
+                          {
+                            value: selectedCountryData.supplier,
+                            label: selectedCountryData.supplier,
+                          },
+                        ]
+                      : []
+                  }
+                  isDisabled
+                  placeholder="Supplier"
+                />
+              </div>
+
+              {/* Currency */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                  Currency
+                </label>
+                <Select
+                  value={
+                    selectedCountryData?.currency
+                      ? {
+                          value: selectedCountryData.currency,
+                          label: selectedCountryData.currency,
+                        }
+                      : null
+                  }
+                  options={
+                    selectedCountryData?.currency
+                      ? [
+                          {
+                            value: selectedCountryData.currency,
+                            label: selectedCountryData.currency,
+                          },
+                        ]
+                      : []
+                  }
+                  isDisabled
+                  placeholder="Currency"
+                />
+              </div>
+
+              {/* Payment Terms */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-600 mb-1">
+                  Payment Terms
+                </label>
+                <Select
+                  value={
+                    selectedCountryData?.paymentTerms
+                      ? {
+                          value: selectedCountryData.paymentTerms,
+                          label: selectedCountryData.paymentTerms,
+                        }
+                      : null
+                  }
+                  options={
+                    selectedCountryData?.paymentTerms
+                      ? [
+                          {
+                            value: selectedCountryData.paymentTerms,
+                            label: selectedCountryData.paymentTerms,
+                          },
+                        ]
+                      : []
+                  }
+                  isDisabled
+                  placeholder="Payment Terms"
+                />
+              </div>
+
               {/* Category */}
-              <div>
+              <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-600 mb-1">
                   Select Category
                 </label>
@@ -153,7 +242,8 @@ export default function Calculator() {
                       ? {
                           value: selectedCategory,
                           label:
-                            categoryLabels[selectedCategory] || selectedCategory,
+                            categoryLabels[selectedCategory] ||
+                            selectedCategory,
                         }
                       : null
                   }
@@ -175,7 +265,7 @@ export default function Calculator() {
               </div>
 
               {/* Service Level */}
-              <div>
+              <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-600 mb-1">
                   Service Level
                 </label>
@@ -234,7 +324,7 @@ export default function Calculator() {
           )}
 
           {/* Calculate Button */}
-          <div className="mt-8 text-center">
+          <div className="mt-8">
             <button
               onClick={() => setShowResult(true)}
               disabled={
@@ -242,7 +332,7 @@ export default function Calculator() {
                 (selectedCategory === "networkOperationsLevels" &&
                   !backfillOption)
               }
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Calculate
             </button>
@@ -258,16 +348,8 @@ export default function Calculator() {
               </div>
 
               <p>
-                <span className="font-semibold">Supplier:</span>{" "}
-                {selectedCountryData?.supplier || "-"}
-              </p>
-              <p>
-                <span className="font-semibold">Currency:</span>{" "}
-                {selectedCountryData?.currency || "-"}
-              </p>
-              <p>
-                <span className="font-semibold">Payment Terms:</span>{" "}
-                {selectedCountryData?.paymentTerms || "-"}
+                <span className="font-semibold">Category:</span>{" "}
+                {categoryLabels[selectedCategory] || selectedCategory || "-"}
               </p>
               <p>
                 <span className="font-semibold">Service Level:</span>{" "}
