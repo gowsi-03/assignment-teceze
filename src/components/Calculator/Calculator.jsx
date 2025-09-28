@@ -5,23 +5,25 @@ export default function Calculator() {
   const [region, setRegion] = useState("");
   const [country, setCountry] = useState("");
   const [service, setService] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState(""); // Track selected category
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [backfillOption, setBackfillOption] = useState(""); // for networkOperationsLevels
 
   // Create a mapping for human-readable category names
   const categoryLabels = {
+     networkOperationsLevels: "Network Operations Levels",
     fullDayVisit: "Full Day Visit",
     halfDayVisits: "Half Day Visit",
     dispatchTicket: "Dispatch Ticket",
     dispatchPricing: "Dispatch Pricing",
     shortTerm: "Short Term",
-    longTerm: "Long Term"
+    longTerm: "Long Term",
   };
 
   // Get the list of country names for the selected region
   const countries = region
     ? data
-        .find((d) => d.region === region) // Find the region
-        ?.countries.map((c) => c.country) // Extract country names
+        .find((d) => d.region === region)
+        ?.countries.map((c) => c.country)
     : [];
 
   // Get the selected region object
@@ -29,11 +31,13 @@ export default function Calculator() {
 
   // Find the selected country's data
   const selectedCountryData =
-    selectedRegion?.countries.find((c) => c.country === country) || null; // Use `null` as a fallback in case no country is found
+    selectedRegion?.countries.find((c) => c.country === country) || null;
 
-  // Get categories dynamically from the selected country data
+  // Get categories dynamically + add networkOperationsLevels
   const availableCategories = selectedCountryData
-    ? Object.keys(selectedCountryData).filter(
+  ? [
+      "networkOperationsLevels",
+      ...Object.keys(selectedCountryData).filter(
         (key) =>
           key !== "country" &&
           key !== "L1" &&
@@ -44,30 +48,43 @@ export default function Calculator() {
           key !== "supplier" &&
           key !== "currency" &&
           key !== "paymentTerms" &&
-          key !== "serviceLevels" // Avoid serviceLevels being listed as a category
+          key !== "serviceLevels"
       )
-    : [];
+    ]
+  : ["networkOperationsLevels"];
 
-  // Get the service levels dynamically based on the selected category
+
+  // Get the service levels dynamically
   const getServiceLevels = () => {
-    if (!selectedCountryData || !selectedCategory) return [];
-
-    // Fetch the category data
-    const serviceLevelsData = selectedCountryData[selectedCategory];
-
-    if (!serviceLevelsData || !serviceLevelsData.length) return []; // Return empty if no data exists
-
-    // If it's either dispatchTicket or dispatchPricing, extract the keys dynamically
-    if (selectedCategory === "dispatchTicket" || selectedCategory === "dispatchPricing") {
-      return Object.keys(serviceLevelsData[0]); // Get all keys as service levels
+    if (selectedCategory === "networkOperationsLevels") {
+      return ["L1", "L2", "L3", "L4", "L5"];
     }
 
-    // If it's a standard service (L1, L2, L3, L4, L5), filter out those levels
-    return Object.keys(serviceLevelsData[0]).filter((key) => key.startsWith("L"));
+    if (!selectedCountryData || !selectedCategory) return [];
+
+    const serviceLevelsData = selectedCountryData[selectedCategory];
+    if (!serviceLevelsData || !serviceLevelsData.length) return [];
+
+    if (
+      selectedCategory === "dispatchTicket" ||
+      selectedCategory === "dispatchPricing"
+    ) {
+      return Object.keys(serviceLevelsData[0]);
+    }
+
+    return Object.keys(serviceLevelsData[0]).filter((key) =>
+      key.startsWith("L")
+    );
   };
 
-  // Calculate price based on the service level and category
+  // Calculate price
   const getPrice = (level, category) => {
+    if (category === "networkOperationsLevels") {
+      const levelData = selectedCountryData?.[level]?.[0];
+      if (!levelData) return null;
+      return backfillOption ? levelData[backfillOption] : null;
+    }
+
     if (!selectedCountryData) return null;
 
     const categoryData = selectedCountryData[category];
@@ -77,7 +94,7 @@ export default function Calculator() {
   };
 
   return (
-    <div>
+    <div className="pb-10s">
       <h1 className="text-2xl md:text-4xl font-bold text-center text-blue-800 mt-8">
         IT Service Pricing Calculator
       </h1>
@@ -85,10 +102,10 @@ export default function Calculator() {
         Calculate your service costs based on the Teceze Global Pricebook.
       </p>
 
-      <div className="mt-6 flex items-center justify-center px-4">
+      <div className="mt-6 flex items-center justify-center px-4 pb-10">
         <div className="w-full max-w-7xl bg-white rounded-2xl shadow-lg p-8">
           {/* Step 1 */}
-          <div className="mt-10">
+          <div className="mt-0 md:mt-10">
             <h2 className="text-lg md:text-xl font-semibold text-gray-700">
               Step 1: Select Service Details
             </h2>
@@ -105,7 +122,8 @@ export default function Calculator() {
                     setRegion(e.target.value);
                     setCountry("");
                     setService("");
-                    setSelectedCategory(""); // Reset category when region changes
+                    setSelectedCategory("");
+                    setBackfillOption("");
                   }}
                   className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm md:text-base focus:ring-2 focus:ring-blue-500"
                 >
@@ -145,7 +163,11 @@ export default function Calculator() {
                 </label>
                 <select
                   value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedCategory(e.target.value);
+                    setService("");
+                    setBackfillOption("");
+                  }}
                   disabled={!country}
                   className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm md:text-base focus:ring-2 focus:ring-blue-500"
                 >
@@ -180,14 +202,42 @@ export default function Calculator() {
             </div>
           </div>
 
+          {/* Network Operations Role Levels  Backfill Options */}
+          {selectedCategory === "networkOperationsLevels" && service && (
+            <div className="mt-6">
+              <p className="font-semibold text-gray-700">Backfill Option:</p>
+              <div className="flex gap-6 mt-2">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    value="withBackfill"
+                    checked={backfillOption === "withBackfill"}
+                    onChange={(e) => setBackfillOption(e.target.value)}
+                    className="mr-2"
+                  />
+                  With Backfill
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    value="withoutBackfill"
+                    checked={backfillOption === "withoutBackfill"}
+                    onChange={(e) => setBackfillOption(e.target.value)}
+                    className="mr-2"
+                  />
+                  Without Backfill
+                </label>
+              </div>
+            </div>
+          )}
+
           {/* Display Output */}
-          <div className="flex items-center my-8">
+          <div className="flex items-center my-6 md:my-8">
             <div className="flex-1 h-px bg-gray-300"></div>
             <span className="px-4 text-gray-500">Display the output</span>
             <div className="flex-1 h-px bg-gray-300"></div>
           </div>
 
-          {/* Display selected values */}
           <p>
             <span className="font-semibold">Supplier:</span>{" "}
             {selectedCountryData?.supplier || "-"}
@@ -205,11 +255,10 @@ export default function Calculator() {
             {service || "-"}
           </p>
 
-          {/* Show Price for selected category */}
           <p>
             <span className="font-semibold">Price:</span>{" "}
             {selectedCategory && service
-              ? `${getPrice(service, selectedCategory)} USD`
+              ? `${getPrice(service, selectedCategory) || "-"} USD`
               : "-"}
           </p>
         </div>
