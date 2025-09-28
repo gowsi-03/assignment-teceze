@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Select from "react-select";
 import { Switch } from "@headlessui/react";
+import { motion as Motion, AnimatePresence } from "framer-motion";
 import data from "../../data/pricebook.json"; // Import your JSON file
 
 export default function Calculator() {
@@ -289,45 +290,52 @@ export default function Calculator() {
             </div>
           </div>
 
-          {/* Backfill Option */}
-          {selectedCategory === "networkOperationsLevels" && (
-            <div className="mt-6">
-              <p className="font-semibold text-gray-700 mb-2">
-                Backfill Option:
-              </p>
-
-              <Switch.Group>
-                <div className="flex items-center">
-                  <Switch
-                    checked={backfillOption === "withBackfill"}
-                    onChange={(checked) =>
-                      setBackfillOption(
-                        checked ? "withBackfill" : "withoutBackfill"
-                      )
-                    }
-                    className={`${
-                      backfillOption === "withBackfill"
-                        ? "bg-blue-600"
-                        : "bg-gray-300"
-                    } relative inline-flex h-6 w-11 items-center rounded-full transition-colors`}
-                  >
-                    <span
+          {/* Backfill Option with Framer Motion */}
+          <AnimatePresence>
+            {selectedCategory === "networkOperationsLevels" && service && (
+              <Motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className="mt-6"
+              >
+                <p className="font-semibold text-gray-700 mb-2">
+                  Backfill Option:
+                </p>
+                <Switch.Group>
+                  <div className="flex items-center">
+                    <Switch
+                      checked={backfillOption === "withBackfill"}
+                      onChange={(checked) =>
+                        setBackfillOption(
+                          checked ? "withBackfill" : "withoutBackfill"
+                        )
+                      }
                       className={`${
                         backfillOption === "withBackfill"
-                          ? "translate-x-6"
-                          : "translate-x-1"
-                      } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
-                    />
-                  </Switch>
-                  <Switch.Label className="ml-3 text-sm text-gray-700">
-                    {backfillOption === "withBackfill"
-                      ? "With Backfill"
-                      : "Without Backfill"}
-                  </Switch.Label>
-                </div>
-              </Switch.Group>
-            </div>
-          )}
+                          ? "bg-green-600"
+                          : "bg-gray-300"
+                      } relative inline-flex h-6 w-11 items-center rounded-full transition-colors`}
+                    >
+                      <span
+                        className={`${
+                          backfillOption === "withBackfill"
+                            ? "translate-x-6"
+                            : "translate-x-1"
+                        } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+                      />
+                    </Switch>
+                    <Switch.Label className="ml-3 text-sm text-gray-700">
+                      {backfillOption === "withBackfill"
+                        ? "With Backfill"
+                        : "Without Backfill"}
+                    </Switch.Label>
+                  </div>
+                </Switch.Group>
+              </Motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Calculate Button */}
           <div className="mt-8">
@@ -345,31 +353,39 @@ export default function Calculator() {
             </button>
           </div>
 
-          {/* Display Result */}
-          {showResult && (
-            <>
-              <div className="flex items-center my-6 md:my-8">
-                <div className="flex-1 h-px bg-gray-300"></div>
-                <span className="px-4 text-gray-500">Result</span>
-                <div className="flex-1 h-px bg-gray-300"></div>
-              </div>
+          {/* Display Result with Framer Motion */}
+          <AnimatePresence>
+            {showResult && (
+              <Motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+                className="mt-6"
+              >
+                <div className="flex items-center my-6 md:my-8">
+                  <div className="flex-1 h-px bg-gray-300"></div>
+                  <span className="px-4 text-gray-500">Result</span>
+                  <div className="flex-1 h-px bg-gray-300"></div>
+                </div>
 
-              <p>
-                <span className="font-semibold">Category:</span>{" "}
-                {categoryLabels[selectedCategory] || selectedCategory || "-"}
-              </p>
-              <p>
-                <span className="font-semibold">Service Level:</span>{" "}
-                {service || "-"}
-              </p>
-              <p>
-                <span className="font-semibold">Price:</span>{" "}
-                {selectedCategory && service
-                  ? `${getPrice(service, selectedCategory) || "-"} USD`
-                  : "-"}
-              </p>
-            </>
-          )}
+                <p>
+                  <span className="font-semibold">Category:</span>{" "}
+                  {categoryLabels[selectedCategory] || selectedCategory || "-"}
+                </p>
+                <p>
+                  <span className="font-semibold">Service Level:</span>{" "}
+                  {service || "-"}
+                </p>
+                <p>
+                  <span className="font-semibold">Price:</span>{" "}
+                  {selectedCategory && service
+                    ? `${getPrice(service, selectedCategory) || "-"} USD`
+                    : "-"}
+                </p>
+              </Motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>
