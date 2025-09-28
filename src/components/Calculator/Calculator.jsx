@@ -1,5 +1,7 @@
 import { useState } from "react";
 import Select from "react-select";
+import { Switch } from "@headlessui/react";
+
 import data from "../../data/pricebook.json"; // Import your JSON file
 
 export default function Calculator() {
@@ -289,39 +291,34 @@ export default function Calculator() {
           </div>
 
           {/* Backfill Option */}
-          {selectedCategory === "networkOperationsLevels" && service && (
-            <div className="mt-6">
-              <p className="font-semibold text-gray-700">Backfill Option:</p>
-              <div className="flex gap-6 mt-2">
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    value="withBackfill"
-                    checked={backfillOption === "withBackfill"}
-                    onChange={(e) => {
-                      setBackfillOption(e.target.value);
-                      setShowResult(false);
-                    }}
-                    className="mr-2"
-                  />
-                  With Backfill
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    value="withoutBackfill"
-                    checked={backfillOption === "withoutBackfill"}
-                    onChange={(e) => {
-                      setBackfillOption(e.target.value);
-                      setShowResult(false);
-                    }}
-                    className="mr-2"
-                  />
-                  Without Backfill
-                </label>
-              </div>
-            </div>
-          )}
+         {selectedCategory === "networkOperationsLevels" && (
+  <div className="mt-6">
+    <p className="font-semibold text-gray-700 mb-2">Backfill Option:</p>
+
+    <Switch.Group>
+      <div className="flex items-center">
+        <Switch
+          checked={backfillOption === "withBackfill"}
+          onChange={(checked) =>
+            setBackfillOption(checked ? "withBackfill" : "withoutBackfill")
+          }
+          className={`${
+            backfillOption === "withBackfill" ? "bg-blue-600" : "bg-gray-300"
+          } relative inline-flex h-6 w-11 items-center rounded-full transition-colors`}
+        >
+          <span
+            className={`${
+              backfillOption === "withBackfill" ? "translate-x-6" : "translate-x-1"
+            } inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+          />
+        </Switch>
+        <Switch.Label className="ml-3 text-sm text-gray-700">
+          {backfillOption === "withBackfill" ? "With Backfill" : "Without Backfill"}
+        </Switch.Label>
+      </div>
+    </Switch.Group>
+  </div>
+)}
 
           {/* Calculate Button */}
           <div className="mt-8">
