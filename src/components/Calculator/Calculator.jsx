@@ -6,9 +6,10 @@ export default function Calculator() {
   const [country, setCountry] = useState("");
   const [service, setService] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [backfillOption, setBackfillOption] = useState(""); // for networkOperationsLevels
+  const [backfillOption, setBackfillOption] = useState("");
+  const [showResult, setShowResult] = useState(false); // new state for button click
 
-  // Create a mapping for human-readable category names
+  // Category Labels
   const categoryLabels = {
     networkOperationsLevels: "Network Operations Levels",
     fullDayVisit: "Full Day Visit",
@@ -19,19 +20,17 @@ export default function Calculator() {
     longTerm: "Long Term",
   };
 
-  // Get the list of country names for the selected region
+  // Countries for selected region
   const countries = region
     ? data.find((d) => d.region === region)?.countries.map((c) => c.country)
     : [];
 
-  // Get the selected region object
+  // Region + country data
   const selectedRegion = data.find((d) => d.region === region);
-
-  // Find the selected country's data
   const selectedCountryData =
     selectedRegion?.countries.find((c) => c.country === country) || null;
 
-  // Get categories dynamically + add networkOperationsLevels
+  // Available categories
   const availableCategories = selectedCountryData
     ? [
         "networkOperationsLevels",
@@ -51,47 +50,40 @@ export default function Calculator() {
       ]
     : ["networkOperationsLevels"];
 
-  // Get the service levels dynamically
+  // Service levels
   const getServiceLevels = () => {
     if (selectedCategory === "networkOperationsLevels") {
       return ["L1", "L2", "L3", "L4", "L5"];
     }
-
     if (!selectedCountryData || !selectedCategory) return [];
-
     const serviceLevelsData = selectedCountryData[selectedCategory];
     if (!serviceLevelsData || !serviceLevelsData.length) return [];
-
     if (
       selectedCategory === "dispatchTicket" ||
       selectedCategory === "dispatchPricing"
     ) {
       return Object.keys(serviceLevelsData[0]);
     }
-
     return Object.keys(serviceLevelsData[0]).filter((key) =>
       key.startsWith("L")
     );
   };
 
-  // Calculate price
+  // Price calculation
   const getPrice = (level, category) => {
     if (category === "networkOperationsLevels") {
       const levelData = selectedCountryData?.[level]?.[0];
       if (!levelData) return null;
       return backfillOption ? levelData[backfillOption] : null;
     }
-
     if (!selectedCountryData) return null;
-
     const categoryData = selectedCountryData[category];
     if (!categoryData) return null;
-
     return categoryData[0]?.[level] || null;
   };
 
   return (
-    <div className="pb-10s">
+    <div className="pb-10">
       <h1 className="text-2xl md:text-4xl font-bold text-center text-blue-800 mt-8">
         IT Service Pricing Calculator
       </h1>
@@ -121,6 +113,7 @@ export default function Calculator() {
                     setService("");
                     setSelectedCategory("");
                     setBackfillOption("");
+                    setShowResult(false);
                   }}
                   className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm md:text-base focus:ring-2 focus:ring-blue-500"
                 >
@@ -140,7 +133,10 @@ export default function Calculator() {
                 </label>
                 <select
                   value={country}
-                  onChange={(e) => setCountry(e.target.value)}
+                  onChange={(e) => {
+                    setCountry(e.target.value);
+                    setShowResult(false);
+                  }}
                   disabled={!region}
                   className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm md:text-base focus:ring-2 focus:ring-blue-500"
                 >
@@ -164,6 +160,7 @@ export default function Calculator() {
                     setSelectedCategory(e.target.value);
                     setService("");
                     setBackfillOption("");
+                    setShowResult(false);
                   }}
                   disabled={!country}
                   className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm md:text-base focus:ring-2 focus:ring-blue-500"
@@ -184,7 +181,10 @@ export default function Calculator() {
                 </label>
                 <select
                   value={service}
-                  onChange={(e) => setService(e.target.value)}
+                  onChange={(e) => {
+                    setService(e.target.value);
+                    setShowResult(false);
+                  }}
                   disabled={!selectedCategory}
                   className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm md:text-base focus:ring-2 focus:ring-blue-500"
                 >
@@ -209,7 +209,10 @@ export default function Calculator() {
                     type="radio"
                     value="withBackfill"
                     checked={backfillOption === "withBackfill"}
-                    onChange={(e) => setBackfillOption(e.target.value)}
+                    onChange={(e) => {
+                      setBackfillOption(e.target.value);
+                      setShowResult(false);
+                    }}
                     className="mr-2"
                   />
                   With Backfill
@@ -219,7 +222,10 @@ export default function Calculator() {
                     type="radio"
                     value="withoutBackfill"
                     checked={backfillOption === "withoutBackfill"}
-                    onChange={(e) => setBackfillOption(e.target.value)}
+                    onChange={(e) => {
+                      setBackfillOption(e.target.value);
+                      setShowResult(false);
+                    }}
                     className="mr-2"
                   />
                   Without Backfill
@@ -228,36 +234,50 @@ export default function Calculator() {
             </div>
           )}
 
-          {/* Display Output */}
-          <div className="flex items-center my-6 md:my-8">
-            <div className="flex-1 h-px bg-gray-300"></div>
-            <span className="px-4 text-gray-500">Display the output</span>
-            <div className="flex-1 h-px bg-gray-300"></div>
+          {/* Calculate Button */}
+          <div className="mt-8 text-center">
+            <button
+              onClick={() => setShowResult(true)}
+              disabled={!service || (selectedCategory === "networkOperationsLevels" && !backfillOption)}
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Calculate
+            </button>
           </div>
 
-          <p>
-            <span className="font-semibold">Supplier:</span>{" "}
-            {selectedCountryData?.supplier || "-"}
-          </p>
-          <p>
-            <span className="font-semibold">Currency:</span>{" "}
-            {selectedCountryData?.currency || "-"}
-          </p>
-          <p>
-            <span className="font-semibold">Payment Terms:</span>{" "}
-            {selectedCountryData?.paymentTerms || "-"}
-          </p>
-          <p>
-            <span className="font-semibold">Service Level:</span>{" "}
-            {service || "-"}
-          </p>
+          {/* Display Output after button click */}
+          {showResult && (
+            <>
+              <div className="flex items-center my-6 md:my-8">
+                <div className="flex-1 h-px bg-gray-300"></div>
+                <span className="px-4 text-gray-500">Result</span>
+                <div className="flex-1 h-px bg-gray-300"></div>
+              </div>
 
-          <p>
-            <span className="font-semibold">Price:</span>{" "}
-            {selectedCategory && service
-              ? `${getPrice(service, selectedCategory) || "-"} USD`
-              : "-"}
-          </p>
+              <p>
+                <span className="font-semibold">Supplier:</span>{" "}
+                {selectedCountryData?.supplier || "-"}
+              </p>
+              <p>
+                <span className="font-semibold">Currency:</span>{" "}
+                {selectedCountryData?.currency || "-"}
+              </p>
+              <p>
+                <span className="font-semibold">Payment Terms:</span>{" "}
+                {selectedCountryData?.paymentTerms || "-"}
+              </p>
+              <p>
+                <span className="font-semibold">Service Level:</span>{" "}
+                {service || "-"}
+              </p>
+              <p>
+                <span className="font-semibold">Price:</span>{" "}
+                {selectedCategory && service
+                  ? `${getPrice(service, selectedCategory) || "-"} USD`
+                  : "-"}
+              </p>
+            </>
+          )}
         </div>
       </div>
     </div>
